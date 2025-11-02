@@ -1,33 +1,78 @@
+# app.py
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="GW Opportunity Finder", layout="wide")
+st.set_page_config(page_title="GW Opportunities", layout="wide")
 
-st.title("🎓 GW Opportunity Finder")
-st.write("An open-source platform by students, for students — discover and share GW fellowships, grants, internships, and awards.")
+st.title("GW Opportunities Finder")
+st.write("Browse fellowships, grants, competitions, and experiential learning programs at GW.")
 
-# Load data
-@st.cache_data
-def load_data():
-    return pd.read_csv("data/opportunities.csv")
+# Sample opportunities data
+data = [
+    {
+        "Title": "Planet Forward Experiential Learning Trips",
+        "Organization": "Planet Forward",
+        "Category": "Experiential Learning",
+        "Eligibility": "Undergraduate and graduate students",
+        "Deadline": "Varies",
+        "Website": "https://planetforward.org/experiential-learning-trips/"
+    },
+    {
+        "Title": "Seeds of the Future Fellowship",
+        "Organization": "GW Food Safety and Security Policy Institute",
+        "Category": "Research / Fellowship",
+        "Eligibility": "Undergraduate and graduate students interested in food systems and sustainability",
+        "Deadline": "Varies",
+        "Website": "https://foodsafety.gwu.edu/seeds"
+    },
+    {
+        "Title": "Knapp Fellowship for Entrepreneurial Service-Learning",
+        "Organization": "The Honey W. Nashman Center",
+        "Category": "Grant / Fellowship",
+        "Eligibility": "Undergraduate and graduate students",
+        "Deadline": "Typically February",
+        "Website": "https://serve.gwu.edu/knapp-fellowship"
+    },
+    {
+        "Title": "New Venture Competition (NVC)",
+        "Organization": "GW Office of Innovation & Entrepreneurship",
+        "Category": "Competition",
+        "Eligibility": "All GW students",
+        "Deadline": "Typically March",
+        "Website": "https://entrepreneurship.gwu.edu/gw-new-venture-competition"
+    },
+    {
+        "Title": "Pitch George Competition",
+        "Organization": "GW Center for Entrepreneurial Excellence",
+        "Category": "Competition",
+        "Eligibility": "All GW students",
+        "Deadline": "Typically November",
+        "Website": "https://business.gwu.edu/pitch-george"
+    }
+]
 
-data = load_data()
+# Convert to DataFrame
+df = pd.DataFrame(data)
 
-# Filters
-majors = st.multiselect("🎯 Filter by major", sorted(data["Major"].dropna().unique()))
-eligibility = st.multiselect("👩‍🎓 Filter by eligibility", sorted(data["Eligibility"].dropna().unique()))
-category = st.multiselect("📁 Filter by category", sorted(data["Category"].dropna().unique()))
+# Sidebar filters
+st.sidebar.header("Filter Opportunities")
+category_filter = st.sidebar.multiselect(
+    "Select Category:",
+    options=df["Category"].unique(),
+    default=df["Category"].unique()
+)
 
-filtered = data.copy()
+eligibility_filter = st.sidebar.text_input("Search by Eligibility:")
 
-if majors:
-    filtered = filtered[filtered["Major"].isin(majors)]
-if eligibility:
-    filtered = filtered[filtered["Eligibility"].isin(eligibility)]
-if category:
-    filtered = filtered[filtered["Category"].isin(category)]
+# Apply filters
+filtered_df = df[df["Category"].isin(category_filter)]
+if eligibility_filter:
+    filtered_df = filtered_df[filtered_df["Eligibility"].str.contains(eligibility_filter, case=False)]
 
-st.dataframe(filtered, use_container_width=True)
+# Display filtered table
+st.dataframe(filtered_df.reset_index(drop=True))
 
-st.markdown("---")
-st.write("💡 Want to add an opportunity? [Contribute here!](https://github.com/Lionnotlamb/gw-opportunity-finder)")
+# Make website links clickable
+for index, row in filtered_df.iterrows():
+    st.markdown(f"[{row['Title']}]({row['Website']}) - {row['Organization']}")
+
