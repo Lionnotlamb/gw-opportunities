@@ -1,11 +1,14 @@
 # app.py
 import streamlit as st
 import pandas as pd
+import os
 
 st.set_page_config(page_title="GW Opportunities", layout="wide")
-
 st.title("GW Opportunities Finder")
 st.write("Browse fellowships, grants, competitions, and experiential learning programs at GW.")
+
+# Confirm which file is being run
+st.text(f"Running app.py from: {os.path.abspath(__file__)}")
 
 # Sample opportunities data
 data = [
@@ -75,4 +78,5 @@ st.dataframe(filtered_df.reset_index(drop=True))
 # Make website links clickable
 for index, row in filtered_df.iterrows():
     st.markdown(f"[{row['Title']}]({row['Website']}) - {row['Organization']}")
+
 
