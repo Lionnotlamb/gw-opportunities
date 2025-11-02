@@ -12,8 +12,4 @@ This tool centralizes them in a single open, community-updated repository.
 - Easy to update via GitHub pull requests.
 - Fully reproducible and open-source — anyone can fork and improve it!
 
-## 🧠 How to Run
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Lionnotlamb/gw-opportunity-finder.git
-   cd gw-opportunity-finder
+
